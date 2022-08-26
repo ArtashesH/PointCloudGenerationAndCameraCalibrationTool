@@ -11,6 +11,7 @@
 #include <QProgressBar>
 #include <QTimer>
 #include <QPair>
+#include <QRect>
 #include <QVector>
 
 
@@ -103,6 +104,10 @@ private:
     //Data selection widget for point cloud generation 
     DataSelectionWidget* m_dataSelectionWidget;
     CalibrationDataSelectionWidget* m_calibDataSelectionWidget;
+
+
+    //Screen size 
+    QRect m_screenSize;
 
     //Calibration Data
     cv::Mat m_cameraMatrix;

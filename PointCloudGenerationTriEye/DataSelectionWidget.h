@@ -47,6 +47,10 @@ private:
     QString m_depthAndAggrImagesFolderPath;
     QString m_experimentFolderPath;
     unsigned int m_selectedDataType;
+    QHBoxLayout* m_progressBarLayout;
+    QProgressBar* m_progressBar;
+        //Screen size 
+    QRect m_screenSize;
 
 private:
     bool isCurrentFolderExperiment(const QString& currentFolderPath);

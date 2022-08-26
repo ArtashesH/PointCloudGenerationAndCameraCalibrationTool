@@ -2,22 +2,37 @@
 #include <QDebug>
 #include <QValidator>
 #include <QRegExp>
+#include <QApplication>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDirIterator>
-
+#include <QdesktopWidget>
+#include <QRect>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+
+#include <iostream>
 
 #include "CalibrationDataSelectionWidget.h"
 
 CalibrationDataSelectionWidget::CalibrationDataSelectionWidget(QWidget* parent)
     : QWidget(parent)
 {
-    this->setFixedHeight(150);
-    this->setFixedWidth(600);
+    
+    
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QDesktopWidget* widget = qApp->desktop();
+    m_screenSize = widget->availableGeometry(widget->primaryScreen());
+   // qDebug() << " desktop screen size " << screenSize.height() << "   " << screenSize.width();
+   // int height = screenGeometry.height();
+   // int width = screenGeometry.width();
+    //height = rec.height();
+    //width = rec.width();
+    this->setFixedHeight(m_screenSize.height()/3);
+    this->setFixedWidth(m_screenSize.width()/3);
     this->setWindowTitle("Calibration Data Selection Widget");
 
     m_gridLayout = new QGridLayout;
@@ -25,13 +40,13 @@ CalibrationDataSelectionWidget::CalibrationDataSelectionWidget(QWidget* parent)
 
     m_selectCalibrationFileButton = new QPushButton;
     m_selectCalibrationFileButton->setText("Select Calibration File");
-    m_selectCalibrationFileButton->setFixedHeight(30);
-    m_selectCalibrationFileButton->setFixedWidth(200);
+    m_selectCalibrationFileButton->setFixedHeight(m_screenSize.height() / 20);
+    m_selectCalibrationFileButton->setFixedWidth(m_screenSize.width() / 10);
 
     m_selectImagesForCalibButton = new QPushButton;
     m_selectImagesForCalibButton->setText("Select Images For Calibration");
-    m_selectImagesForCalibButton->setFixedHeight(30);
-    m_selectImagesForCalibButton->setFixedWidth(200);
+    m_selectImagesForCalibButton->setFixedHeight(m_screenSize.height() / 20);
+    m_selectImagesForCalibButton->setFixedWidth(m_screenSize.width() / 10);
 
 
 
@@ -44,8 +59,8 @@ CalibrationDataSelectionWidget::CalibrationDataSelectionWidget(QWidget* parent)
 
     QRegExpValidator* rxv = new QRegExpValidator(QRegExp("\\d*"), this);
     m_lineForSquareSize->setText(0);
-    m_lineForSquareSize->setFixedHeight(30);
-    m_lineForSquareSize->setFixedWidth(50);
+    m_lineForSquareSize->setFixedHeight(m_screenSize.height() / 35);
+    m_lineForSquareSize->setFixedWidth(m_screenSize.width() / 35);
     m_lineForSquareSize->setValidator(rxv);
 
 
@@ -53,8 +68,8 @@ CalibrationDataSelectionWidget::CalibrationDataSelectionWidget(QWidget* parent)
     m_checkerboardWidthLabel->setText("Checkerboard Width");
 
     m_lineForCheckerBoardWidth = new QLineEdit;
-    m_lineForCheckerBoardWidth->setFixedHeight(30);
-    m_lineForCheckerBoardWidth->setFixedWidth(50);
+    m_lineForCheckerBoardWidth->setFixedHeight(m_screenSize.height() / 35);
+    m_lineForCheckerBoardWidth->setFixedWidth(m_screenSize.width() / 35);
     m_lineForCheckerBoardWidth->setValidator(rxv);
 
 
@@ -62,8 +77,8 @@ CalibrationDataSelectionWidget::CalibrationDataSelectionWidget(QWidget* parent)
     m_checkerboardHeightLabel->setText("Checkerboard Height");
 
     m_lineForCheckerBoardHeight = new QLineEdit;
-    m_lineForCheckerBoardHeight->setFixedHeight(30);
-    m_lineForCheckerBoardHeight->setFixedWidth(50);
+    m_lineForCheckerBoardHeight->setFixedHeight(m_screenSize.height() / 35);
+    m_lineForCheckerBoardHeight->setFixedWidth(m_screenSize.width() / 35);
     m_lineForCheckerBoardHeight->setValidator(rxv);
 
 
@@ -119,7 +134,7 @@ void CalibrationDataSelectionWidget::selectCalibrationFileSlot()
     if (calibFilePath == "")
     {
         messageBox.critical(0, "Error", "Calibration file was not selected !!!");
-        messageBox.setFixedSize(500, 200);
+       // messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -144,7 +159,7 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
     if (m_lineForSquareSize->text().toUInt() == 0) {
 
         messageBox.critical(0, "Error", "PLease specify checkerboard square size !!!");
-        messageBox.setFixedSize(500, 200);
+      //  messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -152,13 +167,13 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
 
     if (m_lineForCheckerBoardWidth->text().toUInt() == 0) {
         messageBox.critical(0, "Error", "PLease specify checkerboard width !!!");
-        messageBox.setFixedSize(500, 200);
+       // messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
     if (m_lineForCheckerBoardHeight->text().toUInt() == 0) {
         messageBox.critical(0, "Error", "PLease specify checkerboard height !!!");
-        messageBox.setFixedSize(500, 200);
+     //   messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -224,7 +239,7 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
 
     if (images.size() == 0) {
         messageBox.critical(0, "Error", "Specified folder does not contain tiff images !!!");
-        messageBox.setFixedSize(500, 200);
+       // messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -275,10 +290,11 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
             cv::drawChessboardCorners(frame, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
 
 
-
-            objpoints.push_back(objp);
-
-            imgpoints.push_back(corner_pts);
+            if (objpoints.size() < 50) {
+                
+                objpoints.push_back(objp);
+                imgpoints.push_back(corner_pts);
+            }
 
         }
 
@@ -293,10 +309,11 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
     cv::destroyAllWindows();
 
     cv::Mat cameraMatrix, distCoeffs, R, T;
+    std::cout << "images for corener detection size  " << objpoints.size() << std::endl;
 
     if (objpoints.size() == 0 || imgpoints.size() == 0) {
         messageBox.critical(0, "Error", "Cannot find any corners in checkerboards !!!");
-        messageBox.setFixedSize(500, 200);
+      //  messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
        

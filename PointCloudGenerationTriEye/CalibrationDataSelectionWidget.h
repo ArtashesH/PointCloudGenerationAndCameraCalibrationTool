@@ -57,6 +57,9 @@ private:
     cv::Mat m_cameraMatrix;
     cv::Mat m_distCoeffs;
 
+    //Screen size 
+    QRect m_screenSize;
+
     /*QPushButton* m_selectFolderWithMultDepthImagesButton;
     QPushButton* m_selectFolderWithMultipleDepthAndAggImagePairsButton;
     QPushButton* m_selectExperimentFolderButton;

@@ -1,4 +1,5 @@
 #include <QFileDialog>
+#include <QDesktopWidget>
 #include <QDebug>
 #include <iostream>
 #include <fstream>
@@ -25,8 +26,20 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
     m_dataSelectionWidget = new DataSelectionWidget;
     m_calibDataSelectionWidget = new CalibrationDataSelectionWidget;
 
-    this->setFixedHeight(400);
-    this->setFixedWidth(1100);
+
+    QDesktopWidget* widget = qApp->desktop();
+    m_screenSize = widget->availableGeometry(widget->primaryScreen());
+    qDebug() << " desktop screen size " << m_screenSize.height() << "   " << m_screenSize.width();
+    // int height = screenGeometry.height();
+    // int width = screenGeometry.width();
+     //height = rec.height();
+     //width = rec.width();
+    this->setFixedHeight(m_screenSize.height() /1.5);
+    this->setFixedWidth(m_screenSize.width() / 1.5);
+
+
+   // this->setFixedHeight(400);
+   // this->setFixedWidth(1100);
     m_mainLayout = new QVBoxLayout;
     m_mainLayout->setSpacing(100);
 
@@ -35,29 +48,29 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
 
    
     m_runCalibrationButton = new QPushButton("Run Calibration");
-    m_runCalibrationButton->setFixedHeight(50);
-    m_runCalibrationButton->setFixedWidth(180);
+    m_runCalibrationButton->setFixedHeight(m_screenSize.height() / 17);
+    m_runCalibrationButton->setFixedWidth(m_screenSize.width() / 10);
 
 
     m_selectImagesFolderButton= new QPushButton("Select Images For Calibration");
-    m_selectImagesFolderButton->setFixedHeight(50);
-    m_selectImagesFolderButton->setFixedWidth(180);
+    m_selectImagesFolderButton->setFixedHeight(m_screenSize.height() / 17);
+    m_selectImagesFolderButton->setFixedWidth(m_screenSize.width() / 10);
 
 
 
     m_selectDepthAndAggrDataButton = new QPushButton("Input Depth Data");
-    m_selectDepthAndAggrDataButton->setFixedHeight(50);
-    m_selectDepthAndAggrDataButton->setFixedWidth(180);
+    m_selectDepthAndAggrDataButton->setFixedHeight(m_screenSize.height() / 17);
+    m_selectDepthAndAggrDataButton->setFixedWidth(m_screenSize.width() / 10);
 
 
     m_selectCalibrationDataButton = new QPushButton("Input Calibration Data");
-    m_selectCalibrationDataButton->setFixedHeight(50);
-    m_selectCalibrationDataButton->setFixedWidth(180);
+    m_selectCalibrationDataButton->setFixedHeight(m_screenSize.height() / 17);
+    m_selectCalibrationDataButton->setFixedWidth(m_screenSize.width() / 10);
 
 
     m_runPointCloudGenerationButon = new QPushButton("Point Cloud Generation");
-    m_runPointCloudGenerationButon->setFixedHeight(50);
-    m_runPointCloudGenerationButon->setFixedWidth(180);
+    m_runPointCloudGenerationButon->setFixedHeight(m_screenSize.height() / 17);
+    m_runPointCloudGenerationButon->setFixedWidth(m_screenSize.width() / 10);
 
 
     m_checkboxForDepthFiler = new QCheckBox;
@@ -79,8 +92,8 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
    
     QRegExpValidator* rxv = new QRegExpValidator(QRegExp("\\d*"), this);
     m_lineForSquareSize->setText(0);
-    m_lineForSquareSize->setFixedHeight(30);
-    m_lineForSquareSize->setFixedWidth(50);
+    m_lineForSquareSize->setFixedHeight(m_screenSize.height() / 30);
+    m_lineForSquareSize->setFixedWidth(m_screenSize.width() / 27);
     m_lineForSquareSize->setValidator(rxv);
 
 
@@ -88,8 +101,8 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
     m_checkerboardWidthLabel->setText("Checkerboard Width");
 
     m_lineForCheckerBoardWidth = new QLineEdit;
-    m_lineForCheckerBoardWidth->setFixedHeight(30);
-    m_lineForCheckerBoardWidth->setFixedWidth(50);
+    m_lineForCheckerBoardWidth->setFixedHeight(m_screenSize.height() / 30);
+    m_lineForCheckerBoardWidth->setFixedWidth(m_screenSize.width() / 27);
     m_lineForCheckerBoardWidth->setValidator(rxv);
 
 
@@ -97,8 +110,8 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
     m_checkerboardHeightLabel->setText("Checkerboard Height");
 
     m_lineForCheckerBoardHeight = new QLineEdit;
-    m_lineForCheckerBoardHeight->setFixedHeight(30);
-    m_lineForCheckerBoardHeight->setFixedWidth(50);
+    m_lineForCheckerBoardHeight->setFixedHeight(m_screenSize.height() / 30);
+    m_lineForCheckerBoardHeight->setFixedWidth(m_screenSize.width() / 27);
     m_lineForCheckerBoardHeight->setValidator(rxv);
 
 
@@ -112,11 +125,11 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
     m_progressBar->setMinimum(0);
     m_progressBar->setMaximum(100);
 
-    m_calibrationLayout->SetFixedSize;
-    m_calibrationLayout->setMargin(10);
+//    m_calibrationLayout->SetFixedSize;
+    m_calibrationLayout->setMargin(m_screenSize.width() / 50);
     m_calibrationLayout->addWidget(m_squareSizeLabel);
-    m_calibrationLayout->setSpacing(20);
-    m_calibrationLayout->setMargin(10);
+    m_calibrationLayout->setSpacing(m_screenSize.width() / 50);
+    m_calibrationLayout->setMargin(m_screenSize.width() / 50);
     m_calibrationLayout->addWidget(m_lineForSquareSize);
 
     m_calibrationLayout->addWidget(m_checkerboardWidthLabel);
@@ -136,13 +149,13 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
  //   m_pointCloudGenerationLayout->setSpacing(100);
   //  m_pointCloudGenerationLayout->setMargin(1);
     m_pointCloudGenerationLayout->addWidget(m_selectDepthAndAggrDataButton);
-    m_pointCloudGenerationLayout->setMargin(10);
+    m_pointCloudGenerationLayout->setMargin(m_screenSize.width() / 50);
 
     m_pointCloudGenerationLayout->addWidget(m_selectCalibrationDataButton);
-    m_pointCloudGenerationLayout->setMargin(10);
+    m_pointCloudGenerationLayout->setMargin(m_screenSize.width() / 50);
     m_pointCloudGenerationLayout->addWidget(m_runPointCloudGenerationButon);
 
-    m_pointCloudGenerationLayout->setSpacing(20);
+    m_pointCloudGenerationLayout->setSpacing(m_screenSize.width() / 50);
     m_pointCloudGenerationLayout->addWidget(m_depthFilterLabel);
     //m_pointCloudGenerationLayout->setMargin(200);
    // m_pointCloudGenerationLayout->setSpacing(1);
@@ -150,28 +163,11 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
 
     m_pointCloudGenerationLayout->addWidget(m_pointCloudFilterLabel);
     m_pointCloudGenerationLayout->addWidget(m_checkboxForPointCloudFiler);
-   /// m_pointCloudGenerationLayout->addWidget(m_progressBar);
 
-   // m_pointCloudGenerationLayout->setContentsMargins(0, 0, 0, 0);
-   // m_pointCloudGenerationLayout->setSpacing(20);
-   
-   // QHBoxLayout* tmpLayTest = new QHBoxLayout;
-   // tmpLayTest->SetFixedSize;
-   // tmpLayTest->addWidget(m_depthFilterLabel);
-   // tmpLayTest->addWidget(m_checkboxForDepthFiler);
-
-   // layout = new QGridLayout;
-   // layout->addWidget(m_runPointCloudGenerationButton, 0, 0);
-   // layout->addLayout(tmpLayTest,0,1);
-    //layout->addWidget(m_depthFilterLabel, 0, 1);
-    //layout->addWidget(m_checkboxForDepthFiler, 0, 2);
-    //layout->addRow(m_runPointCloudGenerationButton, m_depthFilterLabel);
-    //layout->
-    //layout->addWidget(m_checkboxForDepthFiler);
     
     
     m_mainLayout->addLayout(m_calibrationLayout);
-  //  m_mainLayout->addLayout(m_progressBarLayout);
+    m_mainLayout->addLayout(m_progressBarLayout);
     m_mainLayout->addLayout(m_pointCloudGenerationLayout);
     
     this->setLayout(m_mainLayout);
@@ -200,15 +196,12 @@ PointCloudGenerationTriEye::PointCloudGenerationTriEye(QWidget *parent)
 //Select folder for checkerboard calibration
 void PointCloudGenerationTriEye::selectCheckerboardImagesFolderSlot()
 {
+    updateProgress(0);
     QFileDialog dialog;
-   // QFileDialog* fileDialog = new QFileDialog;
-   // fileDialog->setDefaultSuffix("txt");
-   // QString grayScaleImagePath = fileDialog->getExistingDirectory(this, "Curr Dir");//  getOpenFileName(this, "Grayscale Images", "Image", "Images(*.tiff)");
+   
     dialog.setFileMode(QFileDialog::DirectoryOnly);
-    //dialog.setOption(QFileDialog::DontUseNativeDialog, true);
     dialog.setOption(QFileDialog::ShowDirsOnly, true);
-   //dialog.setOptions(QFileDialog::DontUseNativeDialog);
-   // QString strFileName = dialog.getExistingDirectory(this, tr("Select File"), "", tr("All Files (*.*)"));
+
 
     QString filename = dialog.getExistingDirectory(this, "Choose Folder");
     std::cout << "selected folder path " << filename.toStdString() << std::endl;
@@ -219,48 +212,53 @@ void PointCloudGenerationTriEye::selectCheckerboardImagesFolderSlot()
 
 void PointCloudGenerationTriEye::updateProgress(const unsigned int& updateSeconds)
 {
-    m_progressBar->setValue(/*m_progressBar->value() + */updateSeconds);
-    /*if (m_progressBar->value() == 100) {
-        m_progressBar->setValue(0);
-    }*/
+    m_progressBar->setValue(updateSeconds);
+  
 }
 
 void PointCloudGenerationTriEye::runCalibrationSlot()
 {
 
 
+    updateProgress(0);
     // Creating vector to store vectors of 3D points for each checkerboard image
     QMessageBox messageBox;
-   
+   // messageBox.setBaseSize(QSize(160, 120));
+   //messageBox.setMaximumSize(1000, 900);
+
+    //messageBox.setFixedSize(1500, 1200);
     m_lineForSquareSize->update();
     m_lineForCheckerBoardWidth->update();
     m_lineForCheckerBoardHeight->update();
+    
     if (m_lineForSquareSize->text().toUInt() == 0) {
         
-        messageBox.critical(0, "Error", "PLease specify checkerboard square size !!!");
-        messageBox.setFixedSize(500, 200);
+      
+       // messageBox.setFixedSize(1500, 1200);
+        messageBox.critical(0, "Error", "Please specify checkerboard square size !!!");        
+        //messageBox.setFixedSize(m_screenSize.width() / 300, m_screenSize.height() / 300);
         messageBox.show();
         return;
     }
 
 
     if (m_lineForCheckerBoardWidth->text().toUInt() == 0) {
-        messageBox.critical(0, "Error", "PLease specify checkerboard width !!!");
-        messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Please specify checkerboard width !!!");
+     //   messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
     if (m_lineForCheckerBoardHeight->text().toUInt() == 0) {
-        messageBox.critical(0, "Error", "PLease specify checkerboard height !!!");
-        messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Please specify checkerboard height !!!");
+       // messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
 
 
     if (m_checkerboardImagesFolderPath == "") {
-        messageBox.critical(0, "Error", "PLease specify folder path for checkerboard images!");
-        messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Please specify folder path for checkerboard images!");
+      //  messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -328,7 +326,7 @@ void PointCloudGenerationTriEye::runCalibrationSlot()
    
     if (images.size() == 0) {
         messageBox.critical(0, "Error", "Specified folder does not contain tiff images !!!");
-        messageBox.setFixedSize(500, 200);
+        //messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -378,11 +376,12 @@ void PointCloudGenerationTriEye::runCalibrationSlot()
 
             cv::drawChessboardCorners(frame, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
 
+            if (objpoints.size() < 50 ) {
 
+                objpoints.push_back(objp);
 
-            objpoints.push_back(objp);
-
-            imgpoints.push_back(corner_pts);
+                imgpoints.push_back(corner_pts);
+            }
 
         }
 
@@ -417,14 +416,14 @@ void PointCloudGenerationTriEye::runCalibrationSlot()
     */
     if (objpoints.size() == 0 || imgpoints.size() == 0) {
         messageBox.critical(0, "Error", "Cannot find any corners in checkerboards !!!");
-        messageBox.setFixedSize(500, 200);
+       // messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
 
     }
     cv::calibrateCamera(objpoints, imgpoints, cv::Size(gray.rows, gray.cols), cameraMatrix, distCoeffs, R, T);
     updateProgress(100);
-    m_progressBar->show();
+   // m_progressBar->show();
     QString calibDataResFileName = QFileDialog::getSaveFileName(this, "Save file", "", ".yml");
     cv::FileStorage calibDatSt(calibDataResFileName.toStdString() + ".yml", cv::FileStorage::WRITE);
     calibDatSt << "K"<<cameraMatrix;
@@ -524,7 +523,7 @@ QVector<QString> PointCloudGenerationTriEye::getAllAggrImagePathsInMixedFolder(c
     for (int i = 0; i < images.size(); ++i) {
         std::string baseFilename = images[i].substr(images[i].find_last_of("/\\") + 1);
         std::string baseFileTypeName = cv::String(baseFilename).substr(0, cv::String(baseFilename).find_first_of("_"));
-        if (baseFileTypeName == "aggregate") {
+        if (baseFileTypeName == "agg") {
             aggrImagePaths.push_back(baseFilename.c_str());
         }
 
@@ -537,6 +536,7 @@ QVector<QString> PointCloudGenerationTriEye::getAllAggrImagePathsInMixedFolder(c
 
 QVector<QPair<QString, QString>> PointCloudGenerationTriEye::getDepthAndAggrPairsForExperimentFolder(const std::vector<cv::String>& depthImages, const std::vector<cv::String>& aggrImages)
 {
+    updateProgress(0);
     QVector<QString> depthImagesBaseNames;
     QVector<QString> aggrImagesBaseNames;
 
@@ -666,7 +666,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr PointCloudGenerationTriEye::pointCloudGen
 
 void PointCloudGenerationTriEye::runDepthAndAggrDataSelectionSlot()
 {
-    
+    updateProgress(0);
     this->setDisabled(true);
 
     m_dataSelectionWidget->show();
@@ -679,7 +679,7 @@ void PointCloudGenerationTriEye::runDepthAndAggrDataSelectionSlot()
     if (grayScaleImagePath == "")
     {
         messageBox.critical(0, "Error", "GrayScale image was not selected !!!");
-        messageBox.setFixedSize(500, 200);
+        //messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -690,7 +690,7 @@ void PointCloudGenerationTriEye::runDepthAndAggrDataSelectionSlot()
     if (depthImagePath == "")
     {
         messageBox.critical(0, "Error", "Depth image was not selected !!!");
-        messageBox.setFixedSize(500, 200);
+       // messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -703,8 +703,8 @@ void PointCloudGenerationTriEye::runDepthAndAggrDataSelectionSlot()
     if (calibFilePath == "")
     {
         messageBox.critical(0, "Error", "Calibration file was not selected !!!");
-        messageBox.setFixedSize(500, 200);
-        messageBox.show();
+       // messageBox.setFixedSize(500, 200);
+        messageBox.show(); 
         return;
     }
 
@@ -806,21 +806,21 @@ void PointCloudGenerationTriEye::runDepthAndAggrDataSelectionSlot()
 
 void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
 {
-
+    updateProgress(0);
     QMessageBox messageBox;
     
    
 
     if (m_dataSelectionWidget->getSelectedDataType() == 0) {
         messageBox.information(0, "Info", "PLease select depth data!!!");
-        messageBox.setFixedSize(500, 200);
+      //  messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
 
     }
     if (m_cameraMatrix.rows == 0 || m_cameraMatrix.cols == 0) {
         messageBox.information(0, "Info", "Please select calibration file or do calibration!!!");
-        messageBox.setFixedSize(500, 200);
+       // messageBox.setFixedSize(500, 200);
         messageBox.show();
         return;
     }
@@ -839,9 +839,11 @@ void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
 
         }
         
-        pointCloud = pointCloudGenerationForOnePair(currDepthImg, aggrImg, m_cameraMatrix);
+        pointCloud = pointCloudGenerationForOnePair(currDepthImg, aggrImg, m_cameraMatrix);  
+        updateProgress(100);
         QString pointCloudResFileName = QFileDialog::getSaveFileName(this, "Save point cloud file", "", ".ply");
         pcl::io::savePLYFileASCII(pointCloudResFileName.toStdString() + ".ply", *pointCloud);
+       
     }
     else if (m_dataSelectionWidget->getSelectedDataType() == 3) {
         QString depthImgFolderPath = m_dataSelectionWidget->getDepthImagesFolderPath();
@@ -860,15 +862,17 @@ void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
 
         if (images.size() == 0) {
             messageBox.critical(0, "Error", "Specified Depth Images folder Does Not Contain Tiff Images !!!");
-            messageBox.setFixedSize(500, 200);
+          //  messageBox.setFixedSize(500, 200);
             messageBox.show();
             return;
         }
         for (int i{ 0 }; i < images.size(); i++) {
             currDepthImg = cv::imread(images[i], -1);
             pointCloud = pointCloudGenerationForOnePair(currDepthImg, aggrImg, m_cameraMatrix);           
+            
             std::string currPointCloudSavePath = images[i].substr(0, images[i].find_last_of(".")) + ".ply";
             pcl::io::savePLYFileASCII(currPointCloudSavePath, *pointCloud);
+            updateProgress((i+1) * 100 / images.size());
         }
         
     }
@@ -900,7 +904,7 @@ void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
         }
         if (depthImageEndings.size() == 0) {
             messageBox.critical(0, "Error", "Specified Folder Does Not Contain Depth Images !!!");
-            messageBox.setFixedSize(500, 200);
+         //   messageBox.setFixedSize(500, 200);
             messageBox.show();
             return;
         }
@@ -919,11 +923,12 @@ void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
                 }               
 
             }
-            pointCloud = pointCloudGenerationForOnePair(currDepthImg, aggrImg, m_cameraMatrix);
+            pointCloud = pointCloudGenerationForOnePair(currDepthImg, aggrImg, m_cameraMatrix);          
             std::string baseFilename = depthImageEndings[i].toStdString();
             baseFilename = baseFilename.substr(0, baseFilename.find_last_of("."));
             std::string currPointCloudSavePath = depthAndAggrImagesFolderPath.toStdString() + "/" + baseFilename + ".ply";
             pcl::io::savePLYFileASCII(currPointCloudSavePath, *pointCloud);
+            updateProgress((i +1) * 100 / depthImagesInSelectedFolder.size());
             qDebug() << "POINT CLODU SIOZE " << pointCloud->width;
 
         }
@@ -949,7 +954,7 @@ void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
 
         if (imagesDepth.size() == 0) {
             messageBox.critical(0, "Error", "Specified Depth Images folder Does Not Contain Tiff Images !!!");
-            messageBox.setFixedSize(500, 200);
+         //   messageBox.setFixedSize(500, 200);
             messageBox.show();
             return;
         }
@@ -970,11 +975,12 @@ void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
                 aggrImg = cv::imread(depthAndAggrImagesPairsVec[g].second.toStdString());
             }
             currDepthImg = cv::imread(depthAndAggrImagesPairsVec[g].first.toStdString(),-1);
-            pointCloud = pointCloudGenerationForOnePair(currDepthImg, aggrImg, m_cameraMatrix);
+            pointCloud = pointCloudGenerationForOnePair(currDepthImg, aggrImg, m_cameraMatrix);           
             std::string baseFilename = depthAndAggrImagesPairsVec[g].first.toStdString().substr(depthAndAggrImagesPairsVec[g].first.toStdString().find_last_of("/\\") + 1);
             baseFilename = baseFilename.substr(0, baseFilename.find_last_of("."));
             std::string currPointCloudSavePath = pointCloudFolderPath.toStdString() + "/" + baseFilename + ".ply";
             pcl::io::savePLYFileASCII(currPointCloudSavePath, *pointCloud);
+            updateProgress((g + 1)* 100 / depthAndAggrImagesPairsVec.size());
             qDebug() << "POINT CLODU SIOZE " << pointCloud->width;
         }
 
@@ -1003,6 +1009,7 @@ void PointCloudGenerationTriEye::runPointCloudGenerationSlot()
 
 void PointCloudGenerationTriEye::runCalibrationDataSelectionSlot()
 {
+    updateProgress(0);
     this->setDisabled(true);
     m_calibDataSelectionWidget->show();
     return;
@@ -1011,6 +1018,7 @@ void PointCloudGenerationTriEye::runCalibrationDataSelectionSlot()
 
 void PointCloudGenerationTriEye::closeDataSelectionWidget()
 {
+    updateProgress(0);
     m_dataSelectionWidget->hide();
     this->setDisabled(false);
  }
@@ -1018,6 +1026,7 @@ void PointCloudGenerationTriEye::closeDataSelectionWidget()
 
 void PointCloudGenerationTriEye::closeCalibDataSelectionWidget()
 {
+    updateProgress(0);
     m_calibDataSelectionWidget->hide();
     this->setDisabled(false);
     m_cameraMatrix = m_calibDataSelectionWidget->getCalibCameraMat();
