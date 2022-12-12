@@ -14,6 +14,15 @@
 #include <QRect>
 #include <QVector>
 
+#include <pcl/common/common.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/filters/extract_indices.h>
+
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
+
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
@@ -23,6 +32,7 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/filters/voxel_grid.h>
 
 
 #include <opencv2/core/core.hpp>
@@ -30,6 +40,7 @@
 
 #include "DataSelectionWidget.h"
 #include "CalibrationDataSelectionWidget.h"
+//Main widget 
 
 class PointCloudGenerationTriEye : public QWidget
 {
@@ -37,12 +48,13 @@ class PointCloudGenerationTriEye : public QWidget
 
 public:
     PointCloudGenerationTriEye(QWidget *parent = nullptr);
+    void guidedFilter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, double radius, double epsilon);
     void updateProgress(const unsigned int& updateSeconds);
     ~PointCloudGenerationTriEye();
 
 
 private:
-    void outlierRemoval(const   pcl::PointCloud<pcl::PointXYZRGB>::Ptr inputCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr outputCloud);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr outlierRemoval(const   pcl::PointCloud<pcl::PointXYZRGB>::Ptr inputCloud);
     QVector<QString> getAllDepthImagePathsInMixedFolder(const QString& folderPath);
     QVector<QString> getAllAggrImagePathsInMixedFolder(const QString& folderPath);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointCloudGenerationForOnePair(const cv::Mat& depthImg, const cv::Mat& aggrImage, const cv::Mat& cameraMatrix);
@@ -67,7 +79,7 @@ private:
     QHBoxLayout* m_pointCloudGenerationLayout;
     QHBoxLayout* m_progressBarLayout;
 
-    //QGridLayout*  layout;
+    
 
     //Buttons 
     QPushButton* m_selectImagesFolderButton;

@@ -58,11 +58,20 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\opencv\include;$(SolutionDir)\Dependencies\pcl\include\pcl-1.12;$(SolutionDir)\Dependencies\Boost\include\boost-1_78;$(SolutionDir)\Dependencies\Eigen\eigen3;$(SolutionDir)\Dependencies\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Dependencies\opencv\lib;$(SolutionDir)\Dependencies\pcl\lib;$(SolutionDir)\Dependencies\Boost\lib;$(SolutionDir)\Dependencies\FLANN\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_core453.lib;opencv_imgproc453.lib;opencv_imgcodecs453.lib;opencv_calib3d453.lib;opencv_highgui453.lib;pcl_io.lib;pcl_io_ply.lib;pcl_common.lib;pcl_filters.lib;pcl_kdtree.lib;flann.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\opencv\include;$(SolutionDir)\Dependencies\pcl\include\pcl-1.12;$(SolutionDir)\Dependencies\Boost\include\boost-1_78;$(SolutionDir)\Dependencies\Eigen\eigen3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)\Dependencies\opencv\lib;$(SolutionDir)\Dependencies\pcl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_core453.lib;opencv_imgproc453.lib;opencv_imgcodecs453.lib;opencv_calib3d453.lib;opencv_highgui453.lib;pcl_io.lib;pcl_io_ply.lib;pcl_common.lib;pcl_filters.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_core453d.lib;opencv_imgproc453d.lib;opencv_imgcodecs453d.lib;opencv_calib3d453d.lib;opencv_highgui453d.lib;pcl_iod.lib;pcl_io_plyd.lib;pcl_commond.lib;pcl_filtersd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="Configuration">

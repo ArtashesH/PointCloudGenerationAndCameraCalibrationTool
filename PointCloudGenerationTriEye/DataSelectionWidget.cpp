@@ -4,6 +4,9 @@
 #include <QDirIterator>
 #include <QDesktopWidget>
 #include <QApplication>
+
+#include <iostream>
+
 #include "DataSelectionWidget.h"
 
 DataSelectionWidget::DataSelectionWidget(QWidget* parent)
@@ -15,8 +18,8 @@ DataSelectionWidget::DataSelectionWidget(QWidget* parent)
     m_screenSize = widget->availableGeometry(widget->primaryScreen());
     qDebug() << " desktop screen size " << m_screenSize.height() << "   " << m_screenSize.width();
 
-    this->setFixedHeight(m_screenSize.height() / 3);
-    this->setFixedWidth(m_screenSize.width() / 3);
+    this->setMinimumHeight(m_screenSize.height() / 3);
+    this->setMinimumWidth(m_screenSize.width() / 3);
     this->setWindowTitle("Depth And Aggr Data Selection Widget");
 
     m_selectedDataType = 0;
@@ -60,7 +63,7 @@ DataSelectionWidget::DataSelectionWidget(QWidget* parent)
     m_gridLayout->addWidget(m_selectFolderWithMultDepthImagesButton, 1, 0);
     m_gridLayout->addWidget(m_selectFolderWithMultipleDepthAndAggImagePairsButton, 2, 0);
     m_gridLayout->addWidget(m_selectExperimentFolderButton, 1, 1);
-    //m_gridLayout->addWidget(m_applySelectedDataButton, 2, 1);
+    
 
     this->setLayout(m_gridLayout);
 
@@ -88,20 +91,15 @@ void DataSelectionWidget::selectSimpleDepthImageSlot()
     QMessageBox messageBox;
     if (depthImagePath == "")
     {
-        messageBox.critical(0, "Error", "Depth image was not selected !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Depth image was not selected !!!");       
         messageBox.show();
         return;
     }
     m_selectedDataType = 1;
     messageBox.information(0, "Info", "Selected one depth image !!!");
-  //  messageBox.setFixedSize(500, 200);
     messageBox.show();
     emit widgetClosed();
-   // this->hide();
-  //  emit widgetClosed();
-
-
+   
 }
 
 void DataSelectionWidget::selectPairOfDepthAndAggImageSlot()
@@ -116,8 +114,7 @@ void DataSelectionWidget::selectPairOfDepthAndAggImageSlot()
    
     if (depthImagePath == "")
     {
-        messageBox.critical(0, "Error", "Depth image was not selected !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Depth image was not selected !!!");      
         messageBox.show();
         return;
     }
@@ -126,17 +123,16 @@ void DataSelectionWidget::selectPairOfDepthAndAggImageSlot()
 
     if (aggrImagePath == "")
     {
-        messageBox.critical(0, "Error", "Aggr image was not selected !!!");
-      // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Aggr image was not selected !!!");     
         messageBox.show();
         return;
     }
     m_depthAndAggrImagePath.first = depthImagePath;
     m_depthAndAggrImagePath.second = aggrImagePath;
     m_selectedDataType = 2;
-   // this->hide();
+  
     messageBox.information(0, "Info", "Selected depth and aggr image pair !!!");
-   // messageBox.setFixedSize(500, 200);
+  
     messageBox.show();
     emit widgetClosed();
 
@@ -151,7 +147,7 @@ void DataSelectionWidget::selectFolderWithMultDepthImagesSlot()
     if (depthImagesFolder == "")
     {
         messageBox.critical(0, "Error", "Depth images folder  was not selected !!!");
-       // messageBox.setFixedSize(500, 200);
+       
         messageBox.show();
         return;
     }
@@ -160,20 +156,17 @@ void DataSelectionWidget::selectFolderWithMultDepthImagesSlot()
     QStringList depthFilesInFolder = directory.entryList(nameFilter);
     if (depthFilesInFolder.size() == 0) {
         messageBox.critical(0, "Error", "Selected folder does not contains images !!!");
-      //  messageBox.setFixedSize(500, 200);
+      
         messageBox.show();
         return;
     }
     m_depthImagesFolderPath = depthImagesFolder;
     m_selectedDataType = 3;
     messageBox.information(0, "Info", "Selected folder with depth images !!!");
-  //  messageBox.setFixedSize(500, 200);
+  
     messageBox.show();
     emit widgetClosed();
-   // this->hide();
-   // emit widgetClosed();
-   
-
+  
 }
 
 void DataSelectionWidget::selectFolderWithMultipleDepthAndAggImagePairsSlot()
@@ -185,8 +178,7 @@ void DataSelectionWidget::selectFolderWithMultipleDepthAndAggImagePairsSlot()
     QMessageBox messageBox;
     if (depthAndAggrImagesFolder == "")
     {
-        messageBox.critical(0, "Error", "Images folder  was not selected !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Images folder  was not selected !!!");     
         messageBox.show();
         return;
     }
@@ -194,15 +186,13 @@ void DataSelectionWidget::selectFolderWithMultipleDepthAndAggImagePairsSlot()
     QDir directory(depthAndAggrImagesFolder);
     QStringList depthFilesInFolder = directory.entryList(nameFilter);
     if (depthFilesInFolder.size() == 0) {
-        messageBox.critical(0, "Error", "Selected folder does not contains images !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Selected folder does not contains images !!!");      
         messageBox.show();
         return;
     }
     m_depthAndAggrImagesFolderPath = depthAndAggrImagesFolder;   
     m_selectedDataType = 4;
-   
-   // this->hide();
+    
     emit widgetClosed();
 }
 
@@ -212,48 +202,39 @@ bool DataSelectionWidget::isCurrentFolderExperiment(const QString& currentFolder
     QMessageBox messageBox;
     if (currentFolderPath == "")
     {
-        messageBox.critical(0, "Error", "Experiment folder  was not selected !!!");
-      //  messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Experiment folder  was not selected !!!");        
         messageBox.show();
         return false;
     }
     QDir const source(currentFolderPath);
     if (!source.exists()) {
-        messageBox.critical(0, "Error", "Folder does not exists !!!");
-     //   messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Folder does not exists !!!");        
         messageBox.show();
         return false;
     }
+
+    std::string baseFilename = currentFolderPath.toStdString().substr(currentFolderPath.toStdString().find_last_of("/\\") + 1);
+
 
     QStringList const folders = source.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
 
     QStringList const all = folders;
     QVector<QString> folderNamesVec;
     bool isFolderContainsRaven = false;
-    for (QString const& name : all)
-    {
-        QString const fullPathName = currentFolderPath + QDir::separator() + name;
-        if (QFileInfo(fullPathName).isDir())
-        {
-            folderNamesVec.push_back(fullPathName);
-        }
-
-    }
-    for (int f = 0; f < folderNamesVec.size(); ++f) {
-        if (QFileInfo(folderNamesVec[f]).fileName() == "Raven") {
-            //if 
+ 
+    if (baseFilename == "Raven") {
+             
             isFolderContainsRaven = true;
-            break;
-        }
+           
     }
+    
     if (!isFolderContainsRaven) {
-        messageBox.critical(0, "Error", "Selected folder does not contains  Raven folder !!!");
-      //  messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Selected folder does not  Raven !!!");        
         messageBox.show();
         return false;
     }
-       
-    QString ravenFolderPath = currentFolderPath + "/" + "Raven";
+
+    QString ravenFolderPath = currentFolderPath;
     QDir const sourceRaven(ravenFolderPath);
     QStringList const foldersRaven = sourceRaven.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
 
@@ -271,35 +252,26 @@ bool DataSelectionWidget::isCurrentFolderExperiment(const QString& currentFolder
         }
 
     }
-    /*if (folderNamesInsideRavenVec.size() != 2) {
-        messageBox.critical(0, "Error", "Raven folder does not contains two folders !!!");
-        messageBox.setFixedSize(500, 200);
-        messageBox.show();
-        return false;
-    }*/
-    if (!(folderNamesInsideRavenVec.size() == 2 && ( (folderNamesInsideRavenVec[0] == "DepthImage" &&
-                                                        folderNamesInsideRavenVec[1] == "AggrImage")  
-                                                         || 
-                                                        (folderNamesInsideRavenVec[1] == "DepthImage" &&
-                                                          folderNamesInsideRavenVec[0] == "AggrImage")) )) {
-        messageBox.critical(0, "Error", "Raven folder does not contains folder of depth and aggr  !!!");
-      //  messageBox.setFixedSize(500, 200);
+
+    if (!(folderNamesInsideRavenVec.size() == 2 && ((folderNamesInsideRavenVec[0] == "DepthImage" &&
+        folderNamesInsideRavenVec[1] == "AggrImage")
+        ||
+        (folderNamesInsideRavenVec[1] == "DepthImage" &&
+            folderNamesInsideRavenVec[0] == "AggrImage")))) {
+        messageBox.critical(0, "Error", "Raven folder does not contains folder of depth and aggr  !!!");        
         messageBox.show();
         return false;
 
 
     }
 
-    /*messageBox.information(0, "Info", "Selected experiment folder !!!");
-    messageBox.setFixedSize(500, 200);
-    messageBox.show();*/
     emit widgetClosed();
 
     return true;
 
-
-
 }
+
+
 void DataSelectionWidget::selectExperimentFolderSlot()
 {
 
@@ -310,67 +282,14 @@ void DataSelectionWidget::selectExperimentFolderSlot()
     QMessageBox messageBox;
     if ( isCurrentFolderExperiment(experimentFolder)  ){
         
-
-            messageBox.information(0, "Info", "Selected folder is experiment");
-        //   messageBox.setFixedSize(500, 200);
+            messageBox.information(0, "Info", "Selected folder is experiment");       
             messageBox.show();
-           // return;
+          
     }
-    
-
- 
-   /* if (experimentFolder == "")
-    {
-        messageBox.critical(0, "Error", "Experiment folder  was not selected !!!");
-        messageBox.setFixedSize(500, 200);
-        messageBox.show();
-        return;
-    }
-
-    
-
-   // experimentFolder
-    QDir const source(experimentFolder);
-    if (!source.exists())
-        return;
-        
    
-    QStringList const folders = source.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
-
-    QStringList const all = folders;
-    QVector<QString> folderNamesVec;
-    bool isFolderContainsRaven = false;
-    for (QString const& name : all)
-    {
-        QString const fullPathName = experimentFolder + QDir::separator() + name;
-        if (QFileInfo(fullPathName).isDir())
-        {
-            folderNamesVec.push_back(fullPathName);
-        }
-       
-    }
-    for (int f = 0; f < folderNamesVec.size(); ++f) {
-        if (QFileInfo(folderNamesVec[f]).fileName() == "Raven") {
-            //if 
-            isFolderContainsRaven = true;
-            break;
-        }
-    }
-    if (!isFolderContainsRaven) {
-        messageBox.critical(0, "Error", "Selected folder does not contains  Raven folder !!!");
-        messageBox.setFixedSize(500, 200);
-        messageBox.show();
-        return;
-    }
-    
-    */
-
- 
-
     m_experimentFolderPath = experimentFolder;
     m_selectedDataType = 5;
-   // this->hide();
-   // emit widgetClosed();
+  
 }
 
 void DataSelectionWidget::applySelectedDataSlot()
@@ -380,30 +299,25 @@ void DataSelectionWidget::applySelectedDataSlot()
     {
     case 1:
         
-        messageBox.information(0, "Apply", "Selected one depth image !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.information(0, "Apply", "Selected one depth image !!!");      
         messageBox.show();
         break;
     case 2:
-        messageBox.information(0, "Apply", "Selected depth and aggr image pair !!!");
-        //messageBox.setFixedSize(500, 200);
+        messageBox.information(0, "Apply", "Selected depth and aggr image pair !!!");        
         messageBox.show();
         break;
     case 3:
-        messageBox.information(0, "Apply", "Selected folder with only depth images !!!");
-        //messageBox.setFixedSize(500, 200);
+        messageBox.information(0, "Apply", "Selected folder with only depth images !!!");        
         messageBox.show();
         break;
 
     case 4:
-        messageBox.information(0, "Apply", "Selected folder with depth and aggr images !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.information(0, "Apply", "Selected folder with depth and aggr images !!!");       
         messageBox.show();
         break;
 
     case 5:
-        messageBox.information(0, "Apply", "Selected experiment folder !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.information(0, "Apply", "Selected experiment folder !!!");       
         messageBox.show();
         break;
 

@@ -14,8 +14,10 @@
 #include <QTimer>
 #include <QString>
 
-
 #include <opencv2/core/core.hpp>
+
+
+//Camera calibration widget with buttons 
 
 class CalibrationDataSelectionWidget : public QWidget
 {
@@ -23,12 +25,8 @@ class CalibrationDataSelectionWidget : public QWidget
 public:
     explicit CalibrationDataSelectionWidget(QWidget* parent = nullptr);
     void closeEvent(QCloseEvent* ev);
-    /*unsigned int getSelectedDataType();
-    QString getSimpleDepthPath() const;
-    std::pair<QString, QString> getDepthAndAggrImagePath() const;
-    QString getDepthImagesFolderPath() const;
-    QString getDepthAndAggrImagesFolderPath() const;
-    QString getExperimentFolderPath() const;*/
+    void updateProgress(const unsigned int& updateSeconds);
+
     ~CalibrationDataSelectionWidget();
 
 
@@ -36,12 +34,18 @@ signals:
     void widgetClosed();
     void calibrationFinished();
 
+
+private:
+   
+
 private:
     QPushButton* m_selectCalibrationFileButton;
     QPushButton* m_selectImagesForCalibButton;
     QGridLayout* m_gridLayout;
     QGridLayout* m_gridLayoutForCalibSett;
 
+    QProgressBar* m_progressBar;
+    QVBoxLayout* m_progressBarLayout;
 
     QLineEdit* m_lineForSquareSize;
     QLabel* m_squareSizeLabel;
@@ -60,27 +64,12 @@ private:
     //Screen size 
     QRect m_screenSize;
 
-    /*QPushButton* m_selectFolderWithMultDepthImagesButton;
-    QPushButton* m_selectFolderWithMultipleDepthAndAggImagePairsButton;
-    QPushButton* m_selectExperimentFolderButton;
-    QPushButton* m_applySelectedDataButton;
-    QGridLayout* m_gridLayout;
-    QString m_simpleDepthImagePath;
-    std::pair<QString, QString> m_depthAndAggrImagePath;
-    QString m_depthImagesFolderPath;
-    QString m_depthAndAggrImagesFolderPath;
-    QString m_experimentFolderPath;
-    unsigned int m_selectedDataType;*/
+
 
 public slots:
     void selectCalibrationFileSlot();
     void selectImagesForCalibrationSlot();
-    /*void selectSimpleDepthImageSlot();
-    void selectPairOfDepthAndAggImageSlot();
-    void selectFolderWithMultDepthImagesSlot();
-    void selectFolderWithMultipleDepthAndAggImagePairsSlot();
-    void selectExperimentFolderSlot();
-    void applySelectedDataSlot();*/
+
 
 public:
     cv::Mat getCalibCameraMat() const;

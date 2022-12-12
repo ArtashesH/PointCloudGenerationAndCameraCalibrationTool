@@ -15,6 +15,8 @@
 #include <QTimer>
 #include <QString>
 
+//Widget for choosing depth data type, data and Ir frames
+
 class DataSelectionWidget : public QWidget
 {
     Q_OBJECT

@@ -22,71 +22,64 @@ CalibrationDataSelectionWidget::CalibrationDataSelectionWidget(QWidget* parent)
     : QWidget(parent)
 {
     
+
+    //Camera calibration and  data selection widget 
     
     QScreen* screen = QGuiApplication::primaryScreen();
     QDesktopWidget* widget = qApp->desktop();
     m_screenSize = widget->availableGeometry(widget->primaryScreen());
-   // qDebug() << " desktop screen size " << screenSize.height() << "   " << screenSize.width();
-   // int height = screenGeometry.height();
-   // int width = screenGeometry.width();
-    //height = rec.height();
-    //width = rec.width();
-    this->setFixedHeight(m_screenSize.height()/3);
-    this->setFixedWidth(m_screenSize.width()/3);
+ 
     this->setWindowTitle("Calibration Data Selection Widget");
 
     m_gridLayout = new QGridLayout;
     m_gridLayoutForCalibSett = new QGridLayout;
 
+    //Select  calibration data (.yaml file) button
     m_selectCalibrationFileButton = new QPushButton;
     m_selectCalibrationFileButton->setText("Select Calibration File");
     m_selectCalibrationFileButton->setFixedHeight(m_screenSize.height() / 20);
     m_selectCalibrationFileButton->setFixedWidth(m_screenSize.width() / 10);
 
+    //Select checkerboard images button
     m_selectImagesForCalibButton = new QPushButton;
     m_selectImagesForCalibButton->setText("Select Images For Calibration");
     m_selectImagesForCalibButton->setFixedHeight(m_screenSize.height() / 20);
     m_selectImagesForCalibButton->setFixedWidth(m_screenSize.width() / 10);
 
-
-
-
-
+    //Set square size in Cm label 
     m_squareSizeLabel = new QLabel;
     m_squareSizeLabel->setText("Square Size in cm");
 
+    // Progres bar for showing calibration process
+    m_progressBar = new QProgressBar;
+    m_progressBar->setMinimum(0);
+    m_progressBar->setMaximum(100);
+
+
+
+    m_progressBarLayout = new QVBoxLayout;
+    m_progressBarLayout->addWidget(m_progressBar);
+
     m_lineForSquareSize = new QLineEdit;
 
+    //Check square size always greate than zero
     QRegExpValidator* rxv = new QRegExpValidator(QRegExp("\\d*"), this);
     m_lineForSquareSize->setText(0);
-    m_lineForSquareSize->setFixedHeight(m_screenSize.height() / 35);
-    m_lineForSquareSize->setFixedWidth(m_screenSize.width() / 35);
     m_lineForSquareSize->setValidator(rxv);
 
-
+    //Set checkerboard corners count width
     m_checkerboardWidthLabel = new QLabel;
     m_checkerboardWidthLabel->setText("Checkerboard Width");
 
     m_lineForCheckerBoardWidth = new QLineEdit;
-    m_lineForCheckerBoardWidth->setFixedHeight(m_screenSize.height() / 35);
-    m_lineForCheckerBoardWidth->setFixedWidth(m_screenSize.width() / 35);
     m_lineForCheckerBoardWidth->setValidator(rxv);
 
-
+    //Set checkerboard corners count height
     m_checkerboardHeightLabel = new QLabel;
     m_checkerboardHeightLabel->setText("Checkerboard Height");
 
     m_lineForCheckerBoardHeight = new QLineEdit;
-    m_lineForCheckerBoardHeight->setFixedHeight(m_screenSize.height() / 35);
-    m_lineForCheckerBoardHeight->setFixedWidth(m_screenSize.width() / 35);
     m_lineForCheckerBoardHeight->setValidator(rxv);
-
-
-
-
-   // m_gridLayout->addWidget(m_selectCalibrationFileButton, 0, 0);
-   // m_gridLayout->addWidget(m_selectImagesForCalibButton, 0, 1);
-
 
 
 
@@ -97,17 +90,19 @@ CalibrationDataSelectionWidget::CalibrationDataSelectionWidget(QWidget* parent)
     m_gridLayoutForCalibSett->addWidget(m_lineForCheckerBoardWidth, 1, 1);
 
 
-    m_gridLayoutForCalibSett->addWidget(m_checkerboardHeightLabel, 2, 0);
+    m_gridLayoutForCalibSett->addWidget(m_checkerboardHeightLabel, 2, 0); 
     m_gridLayoutForCalibSett->addWidget(m_lineForCheckerBoardHeight, 2, 1);
 
     m_gridLayout->addWidget(m_selectCalibrationFileButton, 0, 0);
-    m_gridLayout->addWidget(m_selectImagesForCalibButton, 0, 1);
+    m_gridLayout->addWidget(m_selectImagesForCalibButton, 0, 1); 
     m_gridLayout->addLayout(m_gridLayoutForCalibSett, 0, 2);
-    
-   
-    this->setLayout(m_gridLayout);
+     
 
+    m_progressBarLayout->addLayout(m_gridLayout);
 
+    this->setLayout(m_progressBarLayout);
+
+    //Connect bottons to slots
     connect(m_selectCalibrationFileButton, SIGNAL(clicked()), this, SLOT(selectCalibrationFileSlot()));
     connect(m_selectImagesForCalibButton, SIGNAL(clicked()), this, SLOT(selectImagesForCalibrationSlot()));
    
@@ -127,14 +122,12 @@ void CalibrationDataSelectionWidget::selectCalibrationFileSlot()
 {
     QFileDialog* fileDialog = new QFileDialog;
     QString calibFilePath = fileDialog->getOpenFileName(this, "Calibration File", "File", "Images(*.yml)");
-
     QMessageBox messageBox;
 
 
     if (calibFilePath == "")
     {
-        messageBox.critical(0, "Error", "Calibration file was not selected !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Calibration file was not selected !!!");      
         messageBox.show();
         return;
     }
@@ -152,28 +145,24 @@ void CalibrationDataSelectionWidget::selectCalibrationFileSlot()
 void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
 {
     QMessageBox messageBox;
-
+    updateProgress(0);
     m_lineForSquareSize->update();
     m_lineForCheckerBoardWidth->update();
     m_lineForCheckerBoardHeight->update();
     if (m_lineForSquareSize->text().toUInt() == 0) {
-
-        messageBox.critical(0, "Error", "PLease specify checkerboard square size !!!");
-      //  messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "PLease specify checkerboard square size !!!");     
         messageBox.show();
         return;
     }
 
 
     if (m_lineForCheckerBoardWidth->text().toUInt() == 0) {
-        messageBox.critical(0, "Error", "PLease specify checkerboard width !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "PLease specify checkerboard width !!!");      
         messageBox.show();
         return;
     }
     if (m_lineForCheckerBoardHeight->text().toUInt() == 0) {
-        messageBox.critical(0, "Error", "PLease specify checkerboard height !!!");
-     //   messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "PLease specify checkerboard height !!!");    
         messageBox.show();
         return;
     }
@@ -182,20 +171,17 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
     dialog.setFileMode(QFileDialog::DirectoryOnly);
     dialog.setOption(QFileDialog::ShowDirsOnly, false);
     QString filename = dialog.getExistingDirectory(this, "Choose Folder");
-    //std::cout << "selected folder path " << filename.toStdString() << std::endl;
-   // m_checkerboardImagesFolderPath = filename;
+   
     std::vector<std::vector<cv::Point3f> > objpoints;
     float square_size = m_lineForSquareSize->text().toUInt();
 
-    unsigned int checkerboardWidth = m_lineForCheckerBoardWidth->text().toUInt();
-    unsigned int checkerboardHeight = m_lineForCheckerBoardHeight->text().toUInt();
+    unsigned int checkerboardWidth = m_lineForCheckerBoardWidth->text().toUInt() - 1;
+    unsigned int checkerboardHeight = m_lineForCheckerBoardHeight->text().toUInt() - 1; 
     int CHECKERBOARD[2]{ checkerboardWidth,checkerboardHeight };
 
     // Creating vector to store vectors of 2D points for each checkerboard image
 
     std::vector<std::vector<cv::Point2f> > imgpoints;
-
-
 
     // Defining the world coordinates for 3D points
 
@@ -238,20 +224,16 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
     // Looping over all the images in the directory
 
     if (images.size() == 0) {
-        messageBox.critical(0, "Error", "Specified folder does not contain tiff images !!!");
-       // messageBox.setFixedSize(500, 200);
+        messageBox.critical(0, "Error", "Specified folder does not contain tiff images !!!");      
         messageBox.show();
         return;
     }
     for (int i{ 0 }; i < images.size(); i++)
 
     {
-     //////////////////////////////  updateProgress(i * 100 / images.size());
-        frame = cv::imread(images[i]);
-        
+     
+        frame = cv::imread(images[i]);        
         cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
-
-
 
         // Finding checker board corners
 
@@ -261,15 +243,6 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
 
 
 
-        /*
-    51
-         * If desired number of corner are detected,
-    52
-         * we refine the pixel coordinates and display
-    53
-         * them on the images of checker board
-    54
-        */
 
         if (success)
 
@@ -297,12 +270,12 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
             }
 
         }
-
-
-
-        cv::imshow("Image", frame);
-
-        cv::waitKey(10);
+       
+        updateProgress(i * 100 / images.size());
+        if (success) {
+            cv::imshow("Image", frame);
+            cv::waitKey(10);
+        }
 
     }
 
@@ -311,32 +284,42 @@ void CalibrationDataSelectionWidget::selectImagesForCalibrationSlot()
     cv::Mat cameraMatrix, distCoeffs, R, T;
     std::cout << "images for corener detection size  " << objpoints.size() << std::endl;
 
-    if (objpoints.size() == 0 || imgpoints.size() == 0) {
-        messageBox.critical(0, "Error", "Cannot find any corners in checkerboards !!!");
-      //  messageBox.setFixedSize(500, 200);
+    if (objpoints.size() == 0 || imgpoints.size() == 0) {      
+        messageBox.critical(0, "Error", "Could not detect checkerboard corners with specified width and height !!!");
+        updateProgress(0);
         messageBox.show();
         return;
        
     }
     cv::calibrateCamera(objpoints, imgpoints, cv::Size(gray.rows, gray.cols), cameraMatrix, distCoeffs, R, T);
+    updateProgress(100);
     m_cameraMatrix = cameraMatrix.clone();
     m_distCoeffs = distCoeffs.clone();
-  //////////////////////////////////////////// updateProgress(100);
-  ////////////////////////////////////////////  m_progressBar->show();
     QString calibDataResFileName = QFileDialog::getSaveFileName(this, "Save file", "", ".yml");
+    updateProgress(0);
     cv::FileStorage calibDatSt(calibDataResFileName.toStdString() + ".yml", cv::FileStorage::WRITE);
     calibDatSt << "K" << cameraMatrix;
     calibDatSt << "D" << distCoeffs;
     calibDatSt.release();
-    //this->hide();
+    
     emit calibrationFinished();
 
 }
+
+
+void CalibrationDataSelectionWidget::updateProgress(const unsigned int& updateSeconds)
+{
+    m_progressBar->setValue(updateSeconds);
+
+}
+
 
 cv::Mat CalibrationDataSelectionWidget::getCalibCameraMat() const
 {
     return m_cameraMatrix;
 }
+
+
 cv::Mat CalibrationDataSelectionWidget::getCalibDistMat() const
 {
     return m_distCoeffs;
